@@ -1,0 +1,58 @@
+From scratch (no pretrained weights):
+
+python train_clip_scratch.py \
+  --csv_path esri_rgb_esa_landcover_zoom_17_patch_224_captions_internvl38b.csv \
+  --image_root /home/rishabh.mondal/data/esri_rgb_esa_landcover_zoom_17_patch_224 \
+  --output_dir outputs_clip_scratch \
+  --epochs 50 \
+  --batch_size 32 \
+  --text_encoder_name scratch \
+  --no-text_backbone_pretrained \
+  --device cuda:3
+
+
+Pretrained (ViT ImageNet + BGE text encoder):
+
+TOKENIZERS_PARALLELISM=false python train_clip_scratch.py \
+  --csv_path esri_rgb_esa_landcover_zoom_17_patch_224_captions_internvl38b.csv \
+  --image_root /home/rishabh.mondal/data/esri_rgb_esa_landcover_zoom_17_patch_224 \
+  --output_dir outputs_clip_pretrained \
+  --epochs 20 \
+  --batch_size 64 \
+  --image_backbone_pretrained \
+  --text_encoder_name BAAI/bge-base-en-v1.5 \
+  --text_backbone_pretrained \
+  --text_backbone_trainable \
+  --device cuda:2
+
+
+Pretrained ViT only (image pretrained, text from scratch):
+
+TOKENIZERS_PARALLELISM=false python train_clip_scratch.py \
+  --csv_path esri_rgb_esa_landcover_zoom_17_patch_224_captions_internvl38b.csv \
+  --image_root /home/rishabh.mondal/data/esri_rgb_esa_landcover_zoom_17_patch_224 \
+  --output_dir outputs_clip_pretrained_vit_only \
+  --epochs 50 \
+  --batch_size 32 \
+  --image_backbone_pretrained \
+  --text_encoder_name scratch \
+  --no-text_backbone_pretrained \
+  --device cuda:0
+
+
+Pretrained BGE only (text pretrained, ViT from scratch):
+
+TOKENIZERS_PARALLELISM=false python train_clip_scratch.py \
+  --csv_path esri_rgb_esa_landcover_zoom_17_patch_224_captions_internvl38b.csv \
+  --image_root /home/rishabh.mondal/data/esri_rgb_esa_landcover_zoom_17_patch_224 \
+  --output_dir outputs_clip_pretrained_text_only \
+  --epochs 50 \
+  --batch_size 32 \
+  --text_encoder_name BAAI/bge-base-en-v1.5 \
+  --text_backbone_pretrained \
+  --text_backbone_trainable \
+  --device cuda:2
+
+
+
+nohup CUDA_VISIBLE_DEVICES=2 streamlit run app_retrieval.py > streamlit.log 2>&1 &
